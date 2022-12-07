@@ -4,8 +4,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -14,17 +17,13 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-@Entity
+@Document
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
     private Long accountNumber;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "account_list")
+    @OneToMany
     private Collection<AccountEntry> entryList;
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "acc_cust")
+    @ManyToOne
     private Customer customer;
     public Account(long accountNumber) {
         this.accountNumber = accountNumber;
