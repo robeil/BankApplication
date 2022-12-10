@@ -2,10 +2,10 @@ package bank.service.impl;
 
 import bank.domain.AccountEntry;
 import bank.dto.AccountDTO;
+import bank.integration.EmailSender;
 import bank.repository.AccountRepository;
 import bank.domain.Account;
 import bank.domain.Customer;
-import bank.jms.IJMSSender;
 import bank.logging.ILogger;
 import bank.service.CurrencyConverterService;
 import org.modelmapper.ModelMapper;
@@ -24,7 +24,7 @@ public class AccountService implements bank.service.AccountService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-    private IJMSSender jmsSender;
+    private EmailSender emailSender;
     @Autowired
     private ILogger logger;
 
@@ -49,7 +49,7 @@ public class AccountService implements bank.service.AccountService {
         updateAccount(account);
         logger.log("deposit with parameters accountNumber= " + accountNumber + " , amount= " + amount);
         if (amount > 10000) {
-            jmsSender.sendJMSMessage("Deposit of $ " + amount + " to account with accountNumber= " + accountNumber);
+            //emailSender.sendEmail("Deposit of $ " + amount + " to account with accountNumber= " + accountNumber);
         }
     }
 
@@ -100,7 +100,8 @@ public class AccountService implements bank.service.AccountService {
         updateAccount(account);
         logger.log("depositEuros with parameters accountNumber= " + accountNumber + " , amount= " + amount);
         if (amountDollars > 10000) {
-            jmsSender.sendJMSMessage("Deposit of $ " + amount + " to account with accountNumber= " + accountNumber);
+            //emailSender.sendEmail("Deposit of $ " + amount + " to account with accountNumber= " + accountNumber);
+
         }
     }
 
@@ -120,7 +121,7 @@ public class AccountService implements bank.service.AccountService {
         updateAccount(toAccount);
         logger.log("transferFunds with parameters fromAccountNumber= " + fromAccountNumber + " , toAccountNumber= " + toAccountNumber + " , amount= " + amount + " , description= " + description);
         if (amount > 10000) {
-            jmsSender.sendJMSMessage("TransferFunds of $ " + amount + " from account with accountNumber= " + fromAccount + " to account with accountNumber= " + toAccount);
+           /// jmsSender.sendJMSMessage("TransferFunds of $ " + amount + " from account with accountNumber= " + fromAccount + " to account with accountNumber= " + toAccount);
         }
     }
 }

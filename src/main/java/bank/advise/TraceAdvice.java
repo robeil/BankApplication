@@ -44,8 +44,6 @@ public class TraceAdvice {
     public Object invoke(ProceedingJoinPoint call, String accountNumber, double amount) throws Throwable {
 
         Object object = call.getTarget();
-        Account accountService = (Account) object;
-        Customer customer = (Customer) object;
         long startTime = System.currentTimeMillis();
         Object requiredTime = call.proceed();
         long endTime = System.currentTimeMillis();
@@ -57,7 +55,7 @@ public class TraceAdvice {
         return requiredTime;
     }
 
-    @After("execution(* bank.jms.JMSSender.sendJMSMessage(..)) && args(message)")
+    @After("execution(* bank.integration.EmailSender.sendEmail(..)) && args(message)")
     public void traceAfterEmailSent(JoinPoint joinpoint, String message) {
 
         logger.log("ClassName = " + joinpoint.getSignature().getDeclaringTypeName() +

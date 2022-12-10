@@ -6,10 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @NoArgsConstructor
 @Getter
@@ -20,6 +17,10 @@ public class Customer {
 	@Id
 	private Long id;
 	private String name;
+
+	@ManyToOne
+	@JoinColumn(name="account_id")
+	private Account account;
 
 	public Customer(String name) {
 		this.name = name;
