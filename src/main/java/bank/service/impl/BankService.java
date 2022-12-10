@@ -32,13 +32,13 @@ public class BankService {
 			Customer customer = new Customer(customerName);
 			customer.setAccount(account);
 			customerRepository.saveCustomer(customer);
-			emailSender.sendEmail(emailAddress, "Welcome " + customerName);
+			emailSender.sendEmail(emailAddress);
 			TraceRecord traceRecord = new TraceRecord(new Date(), "Customer "+customerName+" created with account" +AccountNumber);
 			traceRecordRepository.storeTraceRecord(traceRecord);
 
 		}
 		catch(Exception e) {
-			emailSender.sendEmail(emailAddress, "We could not create your account " + AccountNumber);
+			emailSender.sendEmail(emailAddress);
 			TraceRecord traceRecord = new TraceRecord(new Date(), "Error: could not create customer "+customerName+" with account "+AccountNumber);
 			traceRecordRepository.storeTraceRecord(traceRecord);
 			throw e;

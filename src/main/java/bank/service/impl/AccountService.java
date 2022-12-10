@@ -11,7 +11,6 @@ import bank.service.CurrencyConverterService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -49,14 +48,12 @@ public class AccountService implements bank.service.AccountService {
         updateAccount(account);
         logger.log("deposit with parameters accountNumber= " + accountNumber + " , amount= " + amount);
         if (amount > 10000) {
-            //emailSender.sendEmail("Deposit of $ " + amount + " to account with accountNumber= " + accountNumber);
+            emailSender.sendEmail("Deposit of $ " + amount + " to account with accountNumber= " + accountNumber);
         }
     }
 
     public AccountDTO getAccount(long accountNumber) {
         Account account = accountRepository.findByAccountNumber(accountNumber);
-        //FromAccountToDTO fromToDto = new FromAccountToDTO(account);
-        // return fromToDto.getAccountDTO();
         return modelMapper.map(account, AccountDTO.class);
     }
 
@@ -68,8 +65,6 @@ public class AccountService implements bank.service.AccountService {
             accountRepository.delete(accountExist); // remove the old
             accountRepository.save(account); // add the new
         }
-        //FromAccountToDTO fromToDto = new FromAccountToDTO(account);
-        //return fromToDto.getAccountDTO();
         return modelMapper.map(account, AccountDTO.class);
     }
 
@@ -100,7 +95,7 @@ public class AccountService implements bank.service.AccountService {
         updateAccount(account);
         logger.log("depositEuros with parameters accountNumber= " + accountNumber + " , amount= " + amount);
         if (amountDollars > 10000) {
-            //emailSender.sendEmail("Deposit of $ " + amount + " to account with accountNumber= " + accountNumber);
+            emailSender.sendEmail("Deposit of $ " + amount + " to account with accountNumber= " + accountNumber);
 
         }
     }
