@@ -1,10 +1,7 @@
 package bank.advise;
 
-
-import bank.domain.Account;
-import bank.domain.Customer;
-import bank.logging.ILogger;
-import bank.logging.Logger;
+import bank.logging.LoggerService;
+import bank.logging.LoggerServiceImpl;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -22,7 +19,7 @@ import java.time.LocalTime;
 public class TraceAdvice {
 
     @Autowired
-    private ILogger logger;
+    private LoggerService logger;
 
     @After("execution(* bank.repository.AccountRepository.*(..))")
     public void traceAfterMethod(JoinPoint joinpoint) {
@@ -33,11 +30,11 @@ public class TraceAdvice {
         System.out.println( LocalDateTime.now().getMonth() + " " +
                 LocalDateTime.now().getDayOfMonth() + ", " +
                 localTime + " PM " +
-                object.getClass());
+                object.getClass().toString());
 //        System.out.println("Info : " + joinpoint.getSignature().getName() + " with parameters accountNumber " + accountNumber + " ," +
 //                " customerName = " );
 
-        logger.log(LocalDateTime.now() +" PM " + joinpoint.getSignature().getName() + object.getClass());
+        logger.log(LocalDateTime.now() +" PM " + joinpoint.getSignature().getName() + object.getClass().toString());
     }
 
     @Around("execution(* bank.service.impl.AccountService.*(..)) && args(accountNumber, amount)")
@@ -64,7 +61,7 @@ public class TraceAdvice {
     }
 
     @Bean
-    public Logger getLogger(){
-        return new Logger();
+    public LoggerServiceImpl getLogger(){
+        return new LoggerServiceImpl();
     }
 }

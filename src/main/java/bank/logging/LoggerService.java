@@ -1,5 +1,5 @@
 package bank.logging;
 
-public interface ILogger {
+public interface LoggerService {
     public void log (String logstring);
 }

@@ -2,11 +2,10 @@ package bank.service.impl;
 
 import bank.domain.Account;
 import bank.domain.Customer;
-import bank.domain.TraceRecord;
 import bank.integration.EmailSender;
 import bank.repository.AccountRepository;
 import bank.repository.CustomerRepository;
-import bank.repository.TraceRecordRepository;
+import bank.service.TraceRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ public class BankService {
 	@Autowired
 	private EmailSender emailSender;
 	@Autowired
-	private TraceRecordRepository traceRecordRepository;
+	private TraceRecordService traceRecordService;
 
 	@Transactional
 	public void createCustomerAndAccount(int customerId, String customerName, String emailAddress, long AccountNumber){
@@ -32,15 +31,15 @@ public class BankService {
 			Customer customer = new Customer(customerName);
 			customer.setAccount(account);
 			customerRepository.saveCustomer(customer);
-			emailSender.sendEmail(emailAddress);
+			emailSender.sendEmail("silukeen1@gmail.com","Bank Application","Message from bank application Enterprise Architecture");
 			TraceRecord traceRecord = new TraceRecord(new Date(), "Customer "+customerName+" created with account" +AccountNumber);
-			traceRecordRepository.storeTraceRecord(traceRecord);
+			traceRecordService.save(traceRecord);
 
 		}
 		catch(Exception e) {
-			emailSender.sendEmail(emailAddress);
+			emailSender.sendEmail("silukeen1@gmail.com","Bank Application","Message from bank application Enterprise Architecture");
 			TraceRecord traceRecord = new TraceRecord(new Date(), "Error: could not create customer "+customerName+" with account "+AccountNumber);
-			traceRecordRepository.storeTraceRecord(traceRecord);
+			traceRecordService.save(traceRecord);
 			throw e;
 		}
 	}

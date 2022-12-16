@@ -1,87 +1,60 @@
 package bank.controller;
 
-import bank.domain.Account;
 import bank.dto.AccountDTO;
 import bank.service.AccountService;
-import bank.service.impl.BankService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+
 @CrossOrigin
 @RestController
-@RequestMapping("/accounts")
 public class AccountController {
 
     @Autowired
-    private AccountService accountService;
-    @Autowired
-    private BankService bankService;
+    AccountService accountService;
 
-    @PostMapping("/createcustomer/{customerId}/{customerName}/{emailAddress}/{accountNumber}")
-    public ResponseEntity<?> createCustomerAndCustomer(@PathVariable int customerId,
-                                                       @PathVariable String customerName,
-                                                       @PathVariable String emailAddress,
-                                                       @PathVariable long accountNumber) {
-        bankService.createCustomerAndAccount(customerId,customerName,emailAddress,accountNumber);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    @PostMapping("/createAccount")
+    public ResponseEntity<?> createAccount(@RequestParam(value = "accountNumber") long accountNumber,
+                                           @RequestParam(value = "customerName") String customerName) throws JsonProcessingException {
+        AccountDTO accountDto = accountService.createAccount(accountNumber, customerName);
+        return new ResponseEntity<AccountDTO>(accountDto, HttpStatus.OK);
     }
 
-    @GetMapping
+    @PostMapping("/accounts")
+    public AccountDTO accountOperation(
+            @RequestParam(value = "accountNumber") long accountNumber,
+            @RequestParam(value = "amount") double amount,
+            @RequestParam(value = "operation") String operation,
+            @RequestParam(value = "toAccountNumber") long toAccountNumber,
+            @RequestParam(value = "description") String description) throws JsonProcessingException {
+        if (operation.equals("deposit")) accountService.deposit(accountNumber, amount);
+        if (operation.equals("depositEuros")) accountService.depositEuros(accountNumber, amount);
+        if (operation.equals("withdraw")) accountService.withdraw(accountNumber, amount);
+        if (operation.equals("withdrawEuros")) accountService.withdrawEuros(accountNumber, amount);
+        if (operation.equals("transferFunds"))
+            accountService.transferFunds(accountNumber, toAccountNumber, amount, description);
+        return accountService.getAccount(accountNumber);
+    }
+
+    @GetMapping("/accounts/{accountNumber}")
+    public ResponseEntity<?> getAccount(@PathVariable("accountNumber") long accountNumber) {
+        AccountDTO accountDto = accountService.getAccount(accountNumber);
+        return new ResponseEntity<AccountDTO>(accountDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/accounts")
     public ResponseEntity<?> getAllAccounts() {
-        var allAccounts = accountService.getAllAccounts();
-        return ResponseEntity.ok(allAccounts);
+        Collection<AccountDTO> accountList = accountService.getAllAccounts();
+        return new ResponseEntity<>(accountList, HttpStatus.OK);
     }
 
-    @GetMapping("/get/{accountNumber}")
-    public ResponseEntity<?> getAccount(@PathVariable long accountNumber) {
-        var account = accountService.getAccount(accountNumber);
-        return ResponseEntity.ok(account);
-    }
-
-    @PutMapping("/update")
-    public ResponseEntity<?> updateAccount(@RequestBody Account account) {
-        var updateAccount = accountService.updateAccount(account);
-        return ResponseEntity.ok(updateAccount);
-    }
-
-    @PostMapping("/deposit/{accountNumber}")
-    public ResponseEntity<?> deposit(@PathVariable long accountNumber, @RequestBody double amount) {
+    @PostMapping("/deposit/{accountNumber}/{amount}")
+    public ResponseEntity<?> deposit(@PathVariable long accountNumber, @PathVariable double amount) throws JsonProcessingException {
         accountService.deposit(accountNumber, amount);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-    }
-
-    @PostMapping("/withdraw/{accountNumber}")
-    public ResponseEntity<?> withdraw(@PathVariable long accountNumber, @RequestBody double amount) {
-        accountService.withdraw(accountNumber, amount);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-    }
-
-    @PostMapping("/withdraweures/{accountNumber}")
-    public ResponseEntity<?> withdrawEuros(@PathVariable long accountNumber, @RequestBody double amount) {
-        accountService.withdrawEuros(accountNumber, amount);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-    }
-
-    @PostMapping("/depositeures/{accountNumber}")
-    public ResponseEntity<?> depositEuros(@PathVariable long accountNumber, @RequestBody double amount) {
-        accountService.depositEuros(accountNumber, amount);
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
-    }
-
-    @PostMapping("/createaccount/{accountNumber}/{customerName}")
-    public ResponseEntity<?> createAccount(@PathVariable long accountNumber, @PathVariable String customerName) {
-        AccountDTO account = accountService.createAccount(accountNumber, customerName);
-        return ResponseEntity.ok(account);
-    }
-
-    @PostMapping("/transfer/{fromAccountNumber}/{toAccountNumber}/{amount}/{description}")
-    public ResponseEntity<?> transferFunds(@PathVariable long fromAccountNumber,
-                                           @PathVariable long toAccountNumber,
-                                           @PathVariable double amount,
-                                           @PathVariable String description) {
-        accountService.transferFunds(fromAccountNumber, toAccountNumber, amount, description);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
 }
